@@ -45,131 +45,84 @@ Para evitar que un formulario se envíe de forma predeterminada (lo que recargar
 
 ---
 
-# Análisis de Código
+# Análisis de Código JavaScript
 
-## 1. Código para mostrar un mensaje al hacer clic en un botón
+## 1. Primer Bloque de Código
 
+### HTML
 ```html
 <button id="btn">Haz clic</button>
 <p id="mensaje"></p>
+```
 
-<script>
-  document.getElementById("btn").addEventListener("click", () => {
-    document.getElementById("mensaje").textContent = "¡Botón presionado!";
-  });
-</script>
+### JavaScript
+```javascript
+document.getElementById("btn").addEventListener("click", () => {
+  document.getElementById("mensaje").textContent = "¡Botón presionado!";
+});
+```
 
-Preguntas:
+### ¿Qué hace el código?
+Este código implementa una interacción simple:
+- Crea un botón con el texto "Haz clic" y un párrafo vacío
+- Cuando el usuario hace clic en el botón, se ejecuta una función que cambia el texto del párrafo a "¡Botón presionado!"
+- Utiliza `addEventListener` para registrar el evento de clic y una función flecha para manejar la respuesta
 
-¿Qué hace el código?
+### ¿Qué pasaría si cambiamos `textContent` por `innerHTML`?
+Si cambiamos `textContent` por `innerHTML`:
+- El resultado sería visualmente igual en este caso específico (mostrar "¡Botón presionado!")
+- La diferencia clave es que `innerHTML` interpreta el contenido como HTML, mientras que `textContent` lo trata como texto plano
+- `innerHTML` podría representar un riesgo de seguridad (vulnerabilidad XSS) si el contenido proviene de entrada de usuario, ya que permitiría inyectar y ejecutar código HTML y JavaScript
+- `textContent` es generalmente más seguro y más eficiente cuando solo se necesita mostrar texto
 
-El código agrega un "event listener" (escuchador de eventos) al botón con el id btn. Cuando el usuario hace clic en este botón, se cambia el contenido del elemento <p> con el id mensaje, actualizándolo con el texto "¡Botón presionado!".
+## 2. Segundo Bloque de Código
 
-¿Qué pasaría si cambiamos textContent por innerHTML?
-
-Si cambiamos textContent por innerHTML, el comportamiento sigue siendo el mismo en este caso, ya que solo estamos asignando texto al elemento <p>. Sin embargo, innerHTML permite interpretar y renderizar código HTML dentro del contenido, lo que podría ser útil si en el futuro quieres insertar elementos HTML (como enlaces o imágenes) en lugar de solo texto. Por ejemplo:
-
-javascript
-Copiar
-Editar
-document.getElementById("mensaje").innerHTML = "<b>¡Botón presionado!</b>";
-Esto mostraría el mensaje en negrita, pero también podría ser un riesgo de seguridad si no se controla adecuadamente el contenido, ya que permitiría la inyección de HTML malicioso (por ejemplo, JavaScript).
-
-¿Qué ocurre si se presiona el botón múltiples veces?
-
-Cada vez que el botón es presionado, el mensaje se actualizará a "¡Botón presionado!". No se acumulan los mensajes, solo se reemplaza el contenido dentro del <p>.
-
-2. Código para agregar usuarios a una lista con un formulario
-html
-Copiar
-Editar
+### HTML
+```html
 <form id="form-usuario">
   <input type="text" id="nombre" placeholder="Nombre">
   <button type="submit">Guardar</button>
 </form>
 <ul id="lista-usuarios"></ul>
+```
 
-<script>
-  const usuarios = []; // Array para simular persistencia
+### JavaScript
+```javascript
+const usuarios = []; // Array para simular persistencia
 
-  document.getElementById("form-usuario").addEventListener("submit", (e) => {
-    e.preventDefault(); // ¿Por qué es importante esta línea?
-    const nombre = document.getElementById("nombre").value;
-    usuarios.push(nombre); // Almacena en memoria
-    actualizarListaUsuarios();
-  });
+document.getElementById("form-usuario").addEventListener("submit", (e) => {
+  e.preventDefault(); // ¿Por qué es importante esta línea?
+  const nombre = document.getElementById("nombre").value;
+  usuarios.push(nombre); // Almacena en memoria
+  actualizarListaUsuarios();
+});
 
-  function actualizarListaUsuarios() {
-    const lista = document.getElementById("lista-usuarios");
-    lista.innerHTML = usuarios.map(user => `<li>${user}</li>`).join("");
-  }
-</script>
-Preguntas:
+function actualizarListaUsuarios() {
+  const lista = document.getElementById("lista-usuarios");
+  lista.innerHTML = usuarios.map(user => `<li>${user}</li>`).join("");
+}
+```
 
-¿Qué hace el código al enviar el formulario?
+### ¿Qué hace el código al enviar el formulario?
+Cuando se envía el formulario:
+1. Previene el comportamiento predeterminado del formulario con `e.preventDefault()` (esto evita que la página se recargue)
+2. Obtiene el valor ingresado en el campo de texto
+3. Agrega este valor al array `usuarios`
+4. Llama a la función `actualizarListaUsuarios()` que actualiza la interfaz de usuario
 
-Al enviar el formulario, se captura el valor que el usuario ingresa en el campo de texto con el id nombre. Este valor (el nombre) se agrega al array usuarios. Luego, se llama a la función actualizarListaUsuarios, que actualiza el contenido de la lista <ul> con los nombres de los usuarios almacenados en el array.
+La línea `e.preventDefault()` es importante porque:
+- Por defecto, al enviar un formulario HTML se recarga la página y/o se envían los datos a un servidor
+- Al prevenir este comportamiento, podemos manejar el envío del formulario con JavaScript sin perder el estado actual de la aplicación ni recargar la página
 
-¿Por qué es importante la línea e.preventDefault()?
-
-La línea e.preventDefault() se utiliza para evitar que el formulario se envíe de la manera tradicional, lo que provocaría que la página se recargara. Al evitar este comportamiento predeterminado, podemos manejar el envío del formulario de manera personalizada, permitiendo agregar el nombre al array y actualizar la lista sin recargar la página.
-
-¿Cómo se simula la "persistencia de datos" aquí?
-
-En este caso, la persistencia de datos se simula utilizando un array (usuarios) que almacena los nombres de los usuarios en memoria. Sin embargo, esta "persistencia" solo se mantiene mientras la página esté abierta. Si recargas la página, el array se perderá porque no se está utilizando una base de datos o almacenamiento persistente como LocalStorage, archivos, o bases de datos reales.
-
-Si quisieras simular persistencia de datos de manera más duradera, podrías usar localStorage para guardar los datos en el navegador entre sesiones.
-
-¿Qué pasa si el usuario deja el campo de nombre vacío?
-
-Si el campo nombre está vacío y se envía el formulario, el valor vacío será agregado al array usuarios, lo cual puede causar que se muestre un usuario vacío en la lista. Para evitar esto, se podrían agregar validaciones que verifiquen que el campo no esté vacío antes de permitir que se agregue un nuevo usuario.
-
-¿Es posible eliminar un usuario de la lista?
-
-El código actual no incluye una funcionalidad para eliminar usuarios, pero se podría agregar un botón de "Eliminar" junto a cada usuario, y un manejador de eventos para eliminar al usuario de la lista cuando se haga clic en dicho botón. Esto se puede hacer modificando el array y actualizando la lista después de la eliminación.
-
-3. Código para contar caracteres en un textarea
-html
-Copiar
-Editar
-<textarea id="textarea" placeholder="Escribe algo..."></textarea>
-<p id="contador">Caracteres: 0</p>
-
-<script>
-  document.getElementById("textarea").addEventListener("input", (e) => {
-    const texto = e.target.value;
-    const contador = document.getElementById("contador");
-    contador.textContent = `Caracteres: ${texto.length}`;
-  });
-</script>
-Preguntas:
-
-¿Qué hace el código?
-
-El código agrega un evento de "input" al área de texto (textarea). Cada vez que el usuario escribe o borra algo en el campo, el código actualiza el contador de caracteres en el elemento <p> con el id contador.
-
-¿Qué sucedería si se usara keyUp en lugar de input?
-
-Usar keyUp desencadenaría el evento solo después de que la tecla haya sido soltada. Sin embargo, input se activa en tiempo real mientras se escribe, lo que permite una actualización instantánea del contador de caracteres. Por lo tanto, con input el contador se actualiza más rápidamente.
-
-¿Cómo se podría modificar el código para contar las palabras en lugar de los caracteres?
-
-Para contar las palabras en lugar de los caracteres, se podría modificar el código para dividir el texto en palabras utilizando el método split() y luego contar cuántas palabras hay. Ejemplo:
-
-javascript
-Copiar
-Editar
-const palabras = texto.trim().split(/\s+/).filter(Boolean);
-contador.textContent = `Palabras: ${palabras.length}`;
-r
-Copiar
-Editar
-
-Con este formato, al pegarlo en tu archivo `README.md`, las preguntas se mostrarán correctamente dentro de cada sección de código. ¡Listo para usar!
-
-
-
-
-
-
-
+### ¿Cómo se simula la "persistencia de datos" aquí?
+La persistencia de datos se simula mediante:
+- Un array llamado `usuarios` que almacena los nombres ingresados
+- Este array mantiene los datos solo durante la sesión actual del navegador (memoria RAM)
+- No es una persistencia real ya que los datos se perderán cuando:
+  - Se recargue la página
+  - Se cierre la pestaña o el navegador
+  
+Para una verdadera persistencia, habría que utilizar tecnologías como:
+- localStorage/sessionStorage para almacenamiento en el navegador
+- Una base de datos (con backend) para almacenamiento permanente
+- Servicios de almacenamiento en la nube
