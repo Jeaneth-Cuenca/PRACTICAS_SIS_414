@@ -1,4 +1,5 @@
-## 1. Preguntas Conceptuales
+
+# 1. Preguntas Conceptuales
 
 ### a) ¿Qué es el DOM y cómo se relaciona con HTML?
 
@@ -45,7 +46,7 @@ Para evitar que un formulario se envíe de forma predeterminada (lo que recargar
 
 ---
 
-# Análisis de Código JavaScript
+# 2. Análisis de Código JavaScript
 
 ## 1. Primer Bloque de Código
 
